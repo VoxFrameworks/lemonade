@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>- Lemonade -</title>
+
+  <style>
+    /* =========================================================
+       1️⃣ COLOUR PALETTE
+       --------------------------------------------------------- */
+    :root {
+      /* ----- Header shades (y / dy / dry) ----- */
+      --lemon-primary:#FDE910;   /* y  – bright lemon */
+      --lemon-darker:#ffe66c;    /* dy – slightly darker */
+      --lemon-darkest:#fff5b0;   /* dry – darkest of the three */
+
+      /* ----- Background shades (lighter, diagonal) ----- */
+      --bg-primary:#FFFCE0;   /* top‑left */
+      --bg-mid:#FFF5B3;       /* centre */
+      --bg-dark:#FFEB80;      /* bottom‑right */
+
+      /* ----- Other UI colours ----- */
+      --lemon-accent:#A3D55D;
+      --lemon-muted:#FFD699;
+      --lemon-dark:#7F6600;
+      --log-bg:#2c2c1a;
+    }
+
+    /* ---------------------------------------------------------
+       2️⃣ FONT – Bungee (local .ttf)
+       --------------------------------------------------------- */
+    @font-face{
+      font-family:'Bungee';
+      src:url('fonts/Bungee-Regular.ttf') format('truetype');
+      font-weight:normal;
+      font-style:normal;
+      font-display:swap;
+    }
+
+    /* ---------------------------------------------------------
+       3️⃣ GLOBAL LAYOUT & TYPOGRAPHY
+       --------------------------------------------------------- */
+    body{
+      font-family:-apple-system,BlinkMacSystemFont,"Helvetica Neue",sans-serif;
+      margin:0;padding:0;
+      background:linear-gradient(
+        135deg,
+        var(--bg-primary) 0%,
+        var(--bg-primary) 33%,
+        var(--bg-mid) 33%,
+        var(--bg-mid) 66%,
+        var(--bg-dark) 66%,
+        var(--bg-dark) 100%
+      );
+      color:var(--lemon-dark);
+      min-height:100vh;
+    }
+
+    header{
+      background:linear-gradient(
+        to bottom,
+        var(--lemon-primary) 0%,
+        var(--lemon-primary) 33%,
+        var(--lemon-darker) 33%,
+        var(--lemon-darker) 66%,
+        var(--lemon-darkest) 66%,
+        var(--lemon-darkest) 100%
+      );
+      color:#212121;
+      padding:12px 20px;
+      display:flex;align-items:center;gap:8px;
+    }
+    header h1{
+      margin:0;font-weight:normal;
+      font-family:'Bungee',sans-serif;
+    }
+   .center-container {
+  display: flex;
+  justify-content: center; /* Centers horizontally */
+  align-items: center;     /* Centers vertically */
+  min-height: 100vh;       /* Ensures the container takes up the full viewport height */
+  width: 100vw;            /* Ensures the container takes up the full viewport width */
+}
+
+.panel {
+  /* Additional styles for the panel appearance */
+  background-color: white;
+  padding: 20px;
+  border: 1px solid black;
+  box-shadow: 0px 0px 10px #cccccc;
+  border-radius: 10px;
+  width: 300px; /* Set a desired width */
+  /* Remove fixed height if content is dynamic */
+}
+
+
+    main{padding:20px;}
+
+    /* =========================================================
+       4️⃣ PROGRESS BAR (new!)
+       --------------------------------------------------------- */
+    #install-progress{
+      display:none;               /* hidden until an install starts */
+      height:12px;
+      margin:12px 0;
+      background:#e0e0e0;
+      border-radius:6px;
+      overflow:hidden;
+    }
+    #install-progress .bar{
+      height:100%;
+      width:0%;                   /* will be set via JS */
+      background:var(--lemon-primary);
+      transition:width .2s ease;
+    }
+    /* ----- indeterminate (moving‑stripe) version ----- */
+    #install-progress.indeterminate .bar{
+      width:100%;
+      background:linear-gradient(
+        135deg,
+        var(--lemon-primary) 25%,
+        var(--lemon-darker) 25%,
+        var(--lemon-darker) 50%,
+        var(--lemon-primary) 50%,
+        var(--lemon-primary) 75%,
+        var(--lemon-darker) 75%,
+        var(--lemon-darker) 100%
+      );
+      background-size:200% 100%;
+      animation:marquee 1.5s linear infinite;
+    }
+    @keyframes marquee{
+      0%   {background-position:0 0;}
+      100% {background-position:200% 0;}
+    }
+
+    /* ---------------------------------------------------------
+       5️⃣ SEARCH CONTROLS
+       --------------------------------------------------------- */
+    .search-box{display:flex;gap:8px;margin-bottom:20px;}
+    input[type="text"]{
+      flex:1;padding:8px 10px;font-size:1rem;
+      border:2px solid var(--lemon-muted);
+      border-radius:6px;background:#fff;
+      transition:border-color .2s,box-shadow .2s;
+    }
+    input[type="text"]:focus{
+      outline:none;border-color:var(--lemon-primary);
+      box-shadow:0 0 4px var(--lemon-primary);
+    }
+    button{
+      padding:8px 14px;font-size:1rem;cursor:pointer;
+      background:var(--lemon-primary);color:#212121;
+      border:none;border-radius:6px;
+      box-shadow:0 2px 4px rgba(0,0,0,.1);
+      transition:background .2s,transform .1s;
+    }
+    button:hover{background:var(--lemon-accent);}
+    button:active{transform:translateY(1px);}
+
+    /* ---------------------------------------------------------
+       6️⃣ RESULT CARDS
+       --------------------------------------------------------- */
+    .result{
+      border:1px solid var(--lemon-muted);padding:12px;
+      margin-bottom:8px;border-radius:6px;background:#fff;
+      box-shadow:0 1px 3px rgba(0,0,0,.05);
+      display:flex;align-items:center;justify-content:space-between;
+    }
+    .result span{font-weight:500;}
+    .badge{
+      background:var(--lemon-primary);color:#212121;
+      border-radius:3px;padding:2px 6px;font-size:.8rem;margin-left:6px;
+    }
+
+    /* ---------------------------------------------------------
+       7️⃣ LOG / INSTALL OUTPUT
+       --------------------------------------------------------- */
+    .log{
+      background:var(--log-bg);color:#eee;padding:12px;
+      font-family:monospace;white-space:pre-wrap;
+      max-height:300px;overflow:auto;border-radius:6px;margin-bottom:12px;
+    }
+    #log-close{
+      background:var(--lemon-muted);color:#212121;
+      border:none;border-radius:4px;padding:6px 10px;cursor:pointer;
+    }
+    #log-close:hover{background:var(--lemon-primary);}
+  </style>
+</head>
+
+<body>
+  <header><h1>- Lemonade -</h1></header>
+
+<div class="center-container">
+  <div class="panel">
+    <!-- Panel content goes here -->
+    <h1>Lemonade</h1>
+    <p>Lemonade is a electron based application that entirely rethinks the Homebrew experience. </p>
+    <p>To download the latest version run the command below in your terminal.</p>
+    <pre><code>brew install --cask lemonade</code></pre>
+  </div>
+</div>
+
+
+</body>
+</html>
